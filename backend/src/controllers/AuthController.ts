@@ -58,8 +58,8 @@ class AuthController {
       
       const token = jwt.sign(
         payload,
-        serverConfig.jwtSecret,
-        { expiresIn: serverConfig.jwtExpiresIn }
+        serverConfig.jwtSecret as jwt.Secret,
+        { expiresIn: serverConfig.jwtExpiresIn as string }
       );
 
       // ユーザー情報からパスワードを除外

@@ -1,14 +1,31 @@
-import { Router } from 'express';
+import { Router, RequestHandler } from 'express';
 import ProjectController from '../controllers/ProjectController';
 import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
 // 案件ルート
-router.get('/', authMiddleware, (req, res) => ProjectController.getAllProjects(req, res));
-router.get('/:id', authMiddleware, (req, res) => ProjectController.getProjectById(req, res));
-router.post('/', authMiddleware, (req, res) => ProjectController.createProject(req, res));
-router.put('/:id', authMiddleware, (req, res) => ProjectController.updateProject(req, res));
-router.delete('/:id', authMiddleware, adminMiddleware, (req, res) => ProjectController.deleteProject(req, res));
+router.get('/', authMiddleware, (async (req, res) => {
+  await ProjectController.getAllProjects(req, res);
+}) as RequestHandler);
+
+router.get('/:id', authMiddleware, (async (req, res) => {
+  await ProjectController.getProjectById(req, res);
+}) as RequestHandler);
+
+router.post('/', authMiddleware, (async (req, res) => {
+  await ProjectController.createProject(req, res);
+}) as RequestHandler);
+
+router.put('/:id', authMiddleware, (async (req, res) => {
+  await ProjectController.updateProject(req, res);
+}) as RequestHandler);
+
+// adminMiddlewareを別途適用
+router.delete('/:id', [authMiddleware, (async (req, res, next) => {
+  await adminMiddleware(req, res, next);
+}) as RequestHandler], (async (req, res) => {
+  await ProjectController.deleteProject(req, res);
+}) as RequestHandler);
 
 export default router;

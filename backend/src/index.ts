@@ -11,6 +11,12 @@ import partnerRoutes from './routes/partnerRoutes';
 import projectRoutes from './routes/projectRoutes';
 import memberRoutes from './routes/memberRoutes';
 import applicationRoutes from './routes/applicationRoutes';
+import creditCheckRoutes from './routes/creditCheckRoutes';
+import contractRoutes from './routes/contractRoutes';
+import projectInvitationRoutes from './routes/projectInvitationRoutes';
+import individualContractRoutes from './routes/individualContractRoutes';
+import memberCommunicationRoutes from './routes/memberCommunicationRoutes';
+import memberEvaluationRoutes from './routes/memberEvaluationRoutes';
 
 // Expressアプリケーションの初期化
 const app = express();
@@ -28,6 +34,12 @@ app.use('/api/partners', partnerRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/credit-checks', creditCheckRoutes);
+app.use('/api/contracts', contractRoutes);
+app.use('/api/project-invitations', projectInvitationRoutes);
+app.use('/api/individual-contracts', individualContractRoutes);
+app.use('/api/member-communications', memberCommunicationRoutes);
+app.use('/api/member-evaluations', memberEvaluationRoutes);
 
 // ルートエンドポイント
 app.get('/', (req, res) => {

@@ -1,14 +1,31 @@
-import { Router } from 'express';
+import { Router, RequestHandler } from 'express';
 import PartnerController from '../controllers/PartnerController';
 import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
 // パートナー会社ルート
-router.get('/', authMiddleware, (req, res) => PartnerController.getAllPartners(req, res));
-router.get('/:id', authMiddleware, (req, res) => PartnerController.getPartnerById(req, res));
-router.post('/', authMiddleware, (req, res) => PartnerController.createPartner(req, res));
-router.put('/:id', authMiddleware, (req, res) => PartnerController.updatePartner(req, res));
-router.delete('/:id', authMiddleware, adminMiddleware, (req, res) => PartnerController.deletePartner(req, res));
+router.get('/', authMiddleware, (async (req, res) => {
+  await PartnerController.getAllPartners(req, res);
+}) as RequestHandler);
+
+router.get('/:id', authMiddleware, (async (req, res) => {
+  await PartnerController.getPartnerById(req, res);
+}) as RequestHandler);
+
+router.post('/', authMiddleware, (async (req, res) => {
+  await PartnerController.createPartner(req, res);
+}) as RequestHandler);
+
+router.put('/:id', authMiddleware, (async (req, res) => {
+  await PartnerController.updatePartner(req, res);
+}) as RequestHandler);
+
+// adminMiddlewareを別途適用
+router.delete('/:id', [authMiddleware, (async (req, res, next) => {
+  await adminMiddleware(req, res, next);
+}) as RequestHandler], (async (req, res) => {
+  await PartnerController.deletePartner(req, res);
+}) as RequestHandler);
 
 export default router;

@@ -24,6 +24,12 @@ const partnerRoutes_1 = __importDefault(require("./routes/partnerRoutes"));
 const projectRoutes_1 = __importDefault(require("./routes/projectRoutes"));
 const memberRoutes_1 = __importDefault(require("./routes/memberRoutes"));
 const applicationRoutes_1 = __importDefault(require("./routes/applicationRoutes"));
+const creditCheckRoutes_1 = __importDefault(require("./routes/creditCheckRoutes"));
+const contractRoutes_1 = __importDefault(require("./routes/contractRoutes"));
+const projectInvitationRoutes_1 = __importDefault(require("./routes/projectInvitationRoutes"));
+const individualContractRoutes_1 = __importDefault(require("./routes/individualContractRoutes"));
+const memberCommunicationRoutes_1 = __importDefault(require("./routes/memberCommunicationRoutes"));
+const memberEvaluationRoutes_1 = __importDefault(require("./routes/memberEvaluationRoutes"));
 // Expressアプリケーションの初期化
 const app = (0, express_1.default)();
 // ミドルウェアの設定
@@ -38,6 +44,12 @@ app.use('/api/partners', partnerRoutes_1.default);
 app.use('/api/projects', projectRoutes_1.default);
 app.use('/api/members', memberRoutes_1.default);
 app.use('/api/applications', applicationRoutes_1.default);
+app.use('/api/credit-checks', creditCheckRoutes_1.default);
+app.use('/api/contracts', contractRoutes_1.default);
+app.use('/api/project-invitations', projectInvitationRoutes_1.default);
+app.use('/api/individual-contracts', individualContractRoutes_1.default);
+app.use('/api/member-communications', memberCommunicationRoutes_1.default);
+app.use('/api/member-evaluations', memberEvaluationRoutes_1.default);
 // ルートエンドポイント
 app.get('/', (req, res) => {
     res.json({

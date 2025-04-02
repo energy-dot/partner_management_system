@@ -1,117 +1,105 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
 import sequelize from './index';
+import Member from './Member';
 
-// パートナー会社の属性を定義
-interface PartnerAttributes {
-  id: number;
-  name: string;
-  address: string;
-  phone: string;
-  representative: string;
-  establishedDate: Date;
-  employeeCount: number;
-  businessDescription: string;
-  status: string;
-  creditCheckDate: Date | null;
-  antiSocialCheckDate: Date | null;
-  remarks: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+// パートナー企業モデルクラス
+@Table({
+  tableName: 'partners'
+})
+class Partner extends Model {
+  @Column({
+    type: DataType.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  })
+  id!: number;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: false,
+    unique: true
+  })
+  name!: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: false
+  })
+  address!: string;
+
+  @Column({
+    type: DataType.STRING(20),
+    allowNull: false
+  })
+  phone!: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: false,
+    unique: true
+  })
+  email!: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: true
+  })
+  website!: string;
+
+  @Column({
+    type: DataType.STRING(50),
+    allowNull: false
+  })
+  contactPerson!: string;
+
+  @Column({
+    type: DataType.STRING(20),
+    allowNull: false,
+    defaultValue: '審査中'
+  })
+  status!: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true
+  })
+  notes!: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true
+  })
+  creditCheckDate!: Date | null;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true
+  })
+  antiSocialCheckDate!: Date | null;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true
+  })
+  remarks!: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW
+  })
+  createdAt!: Date;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW
+  })
+  updatedAt!: Date;
+
+  // リレーションシップ
+  @HasMany(() => Member)
+  members!: Member[];
 }
-
-// 作成時のオプション属性（自動生成される属性）
-interface PartnerCreationAttributes extends Optional<PartnerAttributes, 'id' | 'creditCheckDate' | 'antiSocialCheckDate' | 'remarks' | 'createdAt' | 'updatedAt'> {}
-
-// パートナー会社モデルクラス
-class Partner extends Model<PartnerAttributes, PartnerCreationAttributes> implements PartnerAttributes {
-  public id!: number;
-  public name!: string;
-  public address!: string;
-  public phone!: string;
-  public representative!: string;
-  public establishedDate!: Date;
-  public employeeCount!: number;
-  public businessDescription!: string;
-  public status!: string;
-  public creditCheckDate!: Date | null;
-  public antiSocialCheckDate!: Date | null;
-  public remarks!: string | null;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-}
-
-// パートナー会社モデルの初期化
-Partner.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    address: {
-      type: DataTypes.STRING(200),
-      allowNull: false,
-    },
-    phone: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-    },
-    representative: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-    },
-    establishedDate: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-    },
-    employeeCount: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    businessDescription: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    status: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-      defaultValue: '候補',
-      validate: {
-        isIn: [['候補', '取引中', '取引停止']]
-      }
-    },
-    creditCheckDate: {
-      type: DataTypes.DATEONLY,
-      allowNull: true,
-    },
-    antiSocialCheckDate: {
-      type: DataTypes.DATEONLY,
-      allowNull: true,
-    },
-    remarks: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-  },
-  {
-    sequelize,
-    modelName: 'Partner',
-    tableName: 'partners',
-  }
-);
 
 export default Partner;

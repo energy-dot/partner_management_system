@@ -1,11 +1,16 @@
-import { Router } from 'express';
+import { Router, RequestHandler } from 'express';
 import AuthController from '../controllers/AuthController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
 // 認証ルート
-router.post('/login', (req, res) => AuthController.login(req, res));
-router.get('/profile', authMiddleware, (req, res) => AuthController.getProfile(req, res));
+router.post('/login', (async (req, res) => {
+  await AuthController.login(req, res);
+}) as RequestHandler);
+
+router.get('/profile', authMiddleware, (async (req, res) => {
+  await AuthController.getProfile(req, res);
+}) as RequestHandler);
 
 export default router;
