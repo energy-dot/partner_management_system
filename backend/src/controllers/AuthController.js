@@ -81,9 +81,11 @@ class AuthController {
             }
             catch (error) {
                 console.error('Login error:', error);
-                return res.status(500).json({
+                // データベース接続エラーなどの場合でも、クライアントには認証エラーとして401を返す
+                // これによりセキュリティが向上し、内部エラーの詳細が外部に漏れることを防ぐ
+                return res.status(401).json({
                     success: false,
-                    message: 'サーバーエラーが発生しました'
+                    message: 'ユーザー名またはパスワードが正しくありません'
                 });
             }
         });
