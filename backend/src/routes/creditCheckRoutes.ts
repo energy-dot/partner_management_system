@@ -1,24 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import CreditCheckController from '../controllers/CreditCheckController';
-import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 信用調査/反社チェックルート
-router.post('/:id/credit-check', [authMiddleware, (async (req, res, next) => {
-  await adminMiddleware(req, res, next);
-}) as RequestHandler], (async (req, res) => {
-  await CreditCheckController.performCreditCheck(req, res);
-}) as RequestHandler);
+// 信用調査/反社チェック一覧取得
+router.get('/', (req, res) => CreditCheckController.getAllCreditChecks(req, res));
 
-router.post('/:id/anti-social-check', [authMiddleware, (async (req, res, next) => {
-  await adminMiddleware(req, res, next);
-}) as RequestHandler], (async (req, res) => {
-  await CreditCheckController.performAntiSocialCheck(req, res);
-}) as RequestHandler);
+// 特定の信用調査/反社チェック取得
+router.get('/:id', (req, res) => CreditCheckController.getCreditCheckById(req, res));
 
-router.get('/:id/check-history', authMiddleware, (async (req, res) => {
-  await CreditCheckController.getCheckHistory(req, res);
-}) as RequestHandler);
+// 信用調査/反社チェック作成
+router.post('/', (req, res) => CreditCheckController.createCreditCheck(req, res));
+
+// 信用調査/反社チェック更新
+router.put('/:id', (req, res) => CreditCheckController.updateCreditCheck(req, res));
+
+// 信用調査/反社チェック削除
+router.delete('/:id', (req, res) => CreditCheckController.deleteCreditCheck(req, res));
 
 export default router;

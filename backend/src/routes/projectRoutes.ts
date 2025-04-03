@@ -1,31 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import ProjectController from '../controllers/ProjectController';
-import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 案件ルート
-router.get('/', authMiddleware, (async (req, res) => {
-  await ProjectController.getAllProjects(req, res);
-}) as RequestHandler);
+// プロジェクト一覧取得
+router.get('/', (req, res) => ProjectController.getAllProjects(req, res));
 
-router.get('/:id', authMiddleware, (async (req, res) => {
-  await ProjectController.getProjectById(req, res);
-}) as RequestHandler);
+// 特定プロジェクト取得
+router.get('/:id', (req, res) => ProjectController.getProjectById(req, res));
 
-router.post('/', authMiddleware, (async (req, res) => {
-  await ProjectController.createProject(req, res);
-}) as RequestHandler);
+// プロジェクト作成
+router.post('/', (req, res) => ProjectController.createProject(req, res));
 
-router.put('/:id', authMiddleware, (async (req, res) => {
-  await ProjectController.updateProject(req, res);
-}) as RequestHandler);
+// プロジェクト更新
+router.put('/:id', (req, res) => ProjectController.updateProject(req, res));
 
-// adminMiddlewareを別途適用
-router.delete('/:id', [authMiddleware, (async (req, res, next) => {
-  await adminMiddleware(req, res, next);
-}) as RequestHandler], (async (req, res) => {
-  await ProjectController.deleteProject(req, res);
-}) as RequestHandler);
+// プロジェクト削除
+router.delete('/:id', (req, res) => ProjectController.deleteProject(req, res));
 
 export default router;

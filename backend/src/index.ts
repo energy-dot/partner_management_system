@@ -1,16 +1,15 @@
+import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { serverConfig, corsConfig } from './config/config';
-import sequelize from './models/index';
-
-// ルートのインポート
+import sequelize from './models';
 import authRoutes from './routes/authRoutes';
+import userRoutes from './routes/userRoutes';
 import partnerRoutes from './routes/partnerRoutes';
 import projectRoutes from './routes/projectRoutes';
 import memberRoutes from './routes/memberRoutes';
-import applicationRoutes from './routes/applicationRoutes';
 import creditCheckRoutes from './routes/creditCheckRoutes';
 import contractRoutes from './routes/contractRoutes';
 import projectInvitationRoutes from './routes/projectInvitationRoutes';
@@ -30,10 +29,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // ルートの設定
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/partners', partnerRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/members', memberRoutes);
-app.use('/api/applications', applicationRoutes);
 app.use('/api/credit-checks', creditCheckRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/project-invitations', projectInvitationRoutes);
@@ -41,45 +40,29 @@ app.use('/api/individual-contracts', individualContractRoutes);
 app.use('/api/member-communications', memberCommunicationRoutes);
 app.use('/api/member-evaluations', memberEvaluationRoutes);
 
-// ルートエンドポイント
-app.get('/', (req, res) => {
-  res.json({
-    message: 'パートナー要員管理システム API',
-    version: '1.0.0'
-  });
+// ヘルスチェックエンドポイント
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
-// エラーハンドリングミドルウェア
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: 'サーバーエラーが発生しました'
-  });
-});
-
-// サーバーの起動
-const PORT = serverConfig.port;
-
+// データベース接続とサーバー起動
 const startServer = async () => {
   try {
-    // データベース接続の確認
-    await sequelize.authenticate();
-    console.log('データベースに接続しました。');
-    
-    // 開発環境の場合はテーブルを同期
+    // 開発環境ではデータベースを同期する（本番環境では注意が必要）
     if (serverConfig.env === 'development') {
       await sequelize.sync({ alter: true });
-      console.log('データベーステーブルを同期しました。');
+      console.log('Database synchronized');
+    } else {
+      await sequelize.authenticate();
+      console.log('Database connection established');
     }
-    
+
     // サーバーの起動
-    app.listen(PORT, () => {
-      console.log(`サーバーが起動しました: http://localhost:${PORT}`);
+    app.listen(serverConfig.port, () => {
+      console.log(`Server is running on port ${serverConfig.port}`);
     });
   } catch (error) {
-    console.error('サーバーの起動に失敗しました:', error);
-    process.exit(1);
+    console.error('Unable to start server:', error);
   }
 };
 

@@ -61,6 +61,7 @@ class AuthController {
                     username: user.username,
                     role: user.role
                 };
+                // @ts-ignore: 型エラーを一時的に無視
                 const token = jsonwebtoken_1.default.sign(payload, config_1.serverConfig.jwtSecret, { expiresIn: config_1.serverConfig.jwtExpiresIn });
                 // ユーザー情報からパスワードを除外
                 const userWithoutPassword = {

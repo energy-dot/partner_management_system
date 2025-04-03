@@ -1,36 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import MemberEvaluationController from '../controllers/MemberEvaluationController';
-import { authMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 要員評価ルート
-router.get('/', authMiddleware, (async (req, res) => {
-  await MemberEvaluationController.getAllEvaluations(req, res);
-}) as RequestHandler);
+// 要員評価一覧取得
+router.get('/', (req, res) => MemberEvaluationController.getAllMemberEvaluations(req, res));
 
-router.get('/member/:memberId', authMiddleware, (async (req, res) => {
-  await MemberEvaluationController.getEvaluationsByMember(req, res);
-}) as RequestHandler);
+// 特定の要員評価取得
+router.get('/:id', (req, res) => MemberEvaluationController.getMemberEvaluationById(req, res));
 
-router.get('/user/:userId', authMiddleware, (async (req, res) => {
-  await MemberEvaluationController.getEvaluationsByUser(req, res);
-}) as RequestHandler);
+// 要員評価作成
+router.post('/', (req, res) => MemberEvaluationController.createMemberEvaluation(req, res));
 
-router.get('/:id', authMiddleware, (async (req, res) => {
-  await MemberEvaluationController.getEvaluationById(req, res);
-}) as RequestHandler);
+// 要員評価更新
+router.put('/:id', (req, res) => MemberEvaluationController.updateMemberEvaluation(req, res));
 
-router.post('/', authMiddleware, (async (req, res) => {
-  await MemberEvaluationController.createEvaluation(req, res);
-}) as RequestHandler);
-
-router.put('/:id', authMiddleware, (async (req, res) => {
-  await MemberEvaluationController.updateEvaluation(req, res);
-}) as RequestHandler);
-
-router.delete('/:id', authMiddleware, (async (req, res) => {
-  await MemberEvaluationController.deleteEvaluation(req, res);
-}) as RequestHandler);
+// 要員評価削除
+router.delete('/:id', (req, res) => MemberEvaluationController.deleteMemberEvaluation(req, res));
 
 export default router;

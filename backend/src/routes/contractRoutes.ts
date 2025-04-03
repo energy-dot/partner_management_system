@@ -1,34 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import ContractController from '../controllers/ContractController';
-import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 基本契約ルート
-router.get('/', authMiddleware, (async (req, res) => {
-  await ContractController.getAllContracts(req, res);
-}) as RequestHandler);
+// 契約一覧取得
+router.get('/', (req, res) => ContractController.getAllContracts(req, res));
 
-router.get('/partner/:partnerId', authMiddleware, (async (req, res) => {
-  await ContractController.getContractsByPartner(req, res);
-}) as RequestHandler);
+// 特定の契約取得
+router.get('/:id', (req, res) => ContractController.getContractById(req, res));
 
-router.get('/:id', authMiddleware, (async (req, res) => {
-  await ContractController.getContractById(req, res);
-}) as RequestHandler);
+// 契約作成
+router.post('/', (req, res) => ContractController.createContract(req, res));
 
-router.post('/', authMiddleware, (async (req, res) => {
-  await ContractController.createContract(req, res);
-}) as RequestHandler);
+// 契約更新
+router.put('/:id', (req, res) => ContractController.updateContract(req, res));
 
-router.put('/:id', authMiddleware, (async (req, res) => {
-  await ContractController.updateContract(req, res);
-}) as RequestHandler);
-
-router.delete('/:id', [authMiddleware, (async (req, res, next) => {
-  await adminMiddleware(req, res, next);
-}) as RequestHandler], (async (req, res) => {
-  await ContractController.deleteContract(req, res);
-}) as RequestHandler);
+// 契約削除
+router.delete('/:id', (req, res) => ContractController.deleteContract(req, res));
 
 export default router;

@@ -1,12 +1,11 @@
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
-import sequelize from './index';
+import { Table, Column, Model, DataType, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
 import bcrypt from 'bcryptjs';
 
 // ユーザーモデルクラス
 @Table({
   tableName: 'users'
 })
-class User extends Model {
+export class User extends Model {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -36,10 +35,7 @@ class User extends Model {
   @Column({
     type: DataType.STRING(100),
     allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true
-    }
+    unique: true
   })
   email!: string;
 
@@ -87,22 +83,24 @@ class User extends Model {
   async validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
   }
+
+  // パスワードのハッシュ化（作成前）
+  @BeforeCreate
+  static async hashPasswordBeforeCreate(instance: User) {
+    if (instance.password) {
+      const salt = await bcrypt.genSalt(10);
+      instance.password = await bcrypt.hash(instance.password, salt);
+    }
+  }
+
+  // パスワードのハッシュ化（更新前）
+  @BeforeUpdate
+  static async hashPasswordBeforeUpdate(instance: User) {
+    if (instance.changed('password')) {
+      const salt = await bcrypt.genSalt(10);
+      instance.password = await bcrypt.hash(instance.password, salt);
+    }
+  }
 }
-
-// パスワードのハッシュ化（作成前）
-User.beforeCreate(async (user: User) => {
-  if (user.password) {
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
-  }
-});
-
-// パスワードのハッシュ化（更新前）
-User.beforeUpdate(async (user: User) => {
-  if (user.changed('password')) {
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
-  }
-});
 
 export default User;

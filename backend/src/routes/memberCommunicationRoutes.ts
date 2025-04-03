@@ -1,36 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import MemberCommunicationController from '../controllers/MemberCommunicationController';
-import { authMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 要員連絡・依頼ルート
-router.get('/', authMiddleware, (async (req, res) => {
-  await MemberCommunicationController.getAllCommunications(req, res);
-}) as RequestHandler);
+// 要員関連連絡・依頼一覧取得
+router.get('/', (req, res) => MemberCommunicationController.getAllMemberCommunications(req, res));
 
-router.get('/member/:memberId', authMiddleware, (async (req, res) => {
-  await MemberCommunicationController.getCommunicationsByMember(req, res);
-}) as RequestHandler);
+// 特定の要員関連連絡・依頼取得
+router.get('/:id', (req, res) => MemberCommunicationController.getMemberCommunicationById(req, res));
 
-router.get('/user/:userId', authMiddleware, (async (req, res) => {
-  await MemberCommunicationController.getCommunicationsByUser(req, res);
-}) as RequestHandler);
+// 要員関連連絡・依頼作成
+router.post('/', (req, res) => MemberCommunicationController.createMemberCommunication(req, res));
 
-router.get('/:id', authMiddleware, (async (req, res) => {
-  await MemberCommunicationController.getCommunicationById(req, res);
-}) as RequestHandler);
+// 要員関連連絡・依頼更新
+router.put('/:id', (req, res) => MemberCommunicationController.updateMemberCommunication(req, res));
 
-router.post('/', authMiddleware, (async (req, res) => {
-  await MemberCommunicationController.createCommunication(req, res);
-}) as RequestHandler);
-
-router.put('/:id', authMiddleware, (async (req, res) => {
-  await MemberCommunicationController.updateCommunication(req, res);
-}) as RequestHandler);
-
-router.delete('/:id', authMiddleware, (async (req, res) => {
-  await MemberCommunicationController.deleteCommunication(req, res);
-}) as RequestHandler);
+// 要員関連連絡・依頼削除
+router.delete('/:id', (req, res) => MemberCommunicationController.deleteMemberCommunication(req, res));
 
 export default router;

@@ -1,40 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import ProjectInvitationController from '../controllers/ProjectInvitationController';
-import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 案件募集送信ルート
-router.get('/', authMiddleware, (async (req, res) => {
-  await ProjectInvitationController.getAllInvitations(req, res);
-}) as RequestHandler);
+// 案件募集一覧取得
+router.get('/', (req, res) => ProjectInvitationController.getAllProjectInvitations(req, res));
 
-router.get('/project/:projectId', authMiddleware, (async (req, res) => {
-  await ProjectInvitationController.getInvitationsByProject(req, res);
-}) as RequestHandler);
+// 特定の案件募集取得
+router.get('/:id', (req, res) => ProjectInvitationController.getProjectInvitationById(req, res));
 
-router.get('/partner/:partnerId', authMiddleware, (async (req, res) => {
-  await ProjectInvitationController.getInvitationsByPartner(req, res);
-}) as RequestHandler);
+// 案件募集作成
+router.post('/', (req, res) => ProjectInvitationController.createProjectInvitation(req, res));
 
-router.get('/:id', authMiddleware, (async (req, res) => {
-  await ProjectInvitationController.getInvitationById(req, res);
-}) as RequestHandler);
+// 案件募集更新
+router.put('/:id', (req, res) => ProjectInvitationController.updateProjectInvitation(req, res));
 
-router.post('/', authMiddleware, (async (req, res) => {
-  await ProjectInvitationController.createInvitation(req, res);
-}) as RequestHandler);
-
-router.post('/bulk', authMiddleware, (async (req, res) => {
-  await ProjectInvitationController.createBulkInvitations(req, res);
-}) as RequestHandler);
-
-router.put('/:id', authMiddleware, (async (req, res) => {
-  await ProjectInvitationController.updateInvitation(req, res);
-}) as RequestHandler);
-
-router.post('/:id/cancel', authMiddleware, (async (req, res) => {
-  await ProjectInvitationController.cancelInvitation(req, res);
-}) as RequestHandler);
+// 案件募集削除
+router.delete('/:id', (req, res) => ProjectInvitationController.deleteProjectInvitation(req, res));
 
 export default router;

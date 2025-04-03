@@ -1,16 +1,15 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import AuthController from '../controllers/AuthController';
-import { authMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 認証ルート
-router.post('/login', (async (req, res) => {
-  await AuthController.login(req, res);
-}) as RequestHandler);
+// ログインルート
+router.post('/login', (req, res) => AuthController.login(req, res));
 
-router.get('/profile', authMiddleware, (async (req, res) => {
-  await AuthController.getProfile(req, res);
-}) as RequestHandler);
+// ログアウトルート
+router.post('/logout', (req, res) => AuthController.logout(req, res));
+
+// パスワード変更ルート
+router.post('/change-password', (req, res) => AuthController.changePassword(req, res));
 
 export default router;

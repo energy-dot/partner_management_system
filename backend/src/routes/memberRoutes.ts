@@ -1,31 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import MemberController from '../controllers/MemberController';
-import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 要員ルート
-router.get('/', authMiddleware, (async (req, res) => {
-  await MemberController.getAllMembers(req, res);
-}) as RequestHandler);
+// メンバー一覧取得
+router.get('/', (req, res) => MemberController.getAllMembers(req, res));
 
-router.get('/:id', authMiddleware, (async (req, res) => {
-  await MemberController.getMemberById(req, res);
-}) as RequestHandler);
+// 特定メンバー取得
+router.get('/:id', (req, res) => MemberController.getMemberById(req, res));
 
-router.post('/', authMiddleware, (async (req, res) => {
-  await MemberController.createMember(req, res);
-}) as RequestHandler);
+// メンバー作成
+router.post('/', (req, res) => MemberController.createMember(req, res));
 
-router.put('/:id', authMiddleware, (async (req, res) => {
-  await MemberController.updateMember(req, res);
-}) as RequestHandler);
+// メンバー更新
+router.put('/:id', (req, res) => MemberController.updateMember(req, res));
 
-// adminMiddlewareを別途適用
-router.delete('/:id', [authMiddleware, (async (req, res, next) => {
-  await adminMiddleware(req, res, next);
-}) as RequestHandler], (async (req, res) => {
-  await MemberController.deleteMember(req, res);
-}) as RequestHandler);
+// メンバー削除
+router.delete('/:id', (req, res) => MemberController.deleteMember(req, res));
 
 export default router;

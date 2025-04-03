@@ -1,38 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import IndividualContractController from '../controllers/IndividualContractController';
-import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// 個別契約ルート
-router.get('/', authMiddleware, (async (req, res) => {
-  await IndividualContractController.getAllContracts(req, res);
-}) as RequestHandler);
+// 個別契約一覧取得
+router.get('/', (req, res) => IndividualContractController.getAllIndividualContracts(req, res));
 
-router.get('/member/:memberId', authMiddleware, (async (req, res) => {
-  await IndividualContractController.getContractsByMember(req, res);
-}) as RequestHandler);
+// 特定の個別契約取得
+router.get('/:id', (req, res) => IndividualContractController.getIndividualContractById(req, res));
 
-router.get('/project/:projectId', authMiddleware, (async (req, res) => {
-  await IndividualContractController.getContractsByProject(req, res);
-}) as RequestHandler);
+// 個別契約作成
+router.post('/', (req, res) => IndividualContractController.createIndividualContract(req, res));
 
-router.get('/:id', authMiddleware, (async (req, res) => {
-  await IndividualContractController.getContractById(req, res);
-}) as RequestHandler);
+// 個別契約更新
+router.put('/:id', (req, res) => IndividualContractController.updateIndividualContract(req, res));
 
-router.post('/', authMiddleware, (async (req, res) => {
-  await IndividualContractController.createContract(req, res);
-}) as RequestHandler);
-
-router.put('/:id', authMiddleware, (async (req, res) => {
-  await IndividualContractController.updateContract(req, res);
-}) as RequestHandler);
-
-router.delete('/:id', [authMiddleware, (async (req, res, next) => {
-  await adminMiddleware(req, res, next);
-}) as RequestHandler], (async (req, res) => {
-  await IndividualContractController.deleteContract(req, res);
-}) as RequestHandler);
+// 個別契約削除
+router.delete('/:id', (req, res) => IndividualContractController.deleteIndividualContract(req, res));
 
 export default router;

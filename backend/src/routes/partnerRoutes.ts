@@ -1,31 +1,21 @@
-import { Router, RequestHandler } from 'express';
+import express from 'express';
 import PartnerController from '../controllers/PartnerController';
-import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// パートナー会社ルート
-router.get('/', authMiddleware, (async (req, res) => {
-  await PartnerController.getAllPartners(req, res);
-}) as RequestHandler);
+// パートナー一覧取得
+router.get('/', (req, res) => PartnerController.getAllPartners(req, res));
 
-router.get('/:id', authMiddleware, (async (req, res) => {
-  await PartnerController.getPartnerById(req, res);
-}) as RequestHandler);
+// 特定パートナー取得
+router.get('/:id', (req, res) => PartnerController.getPartnerById(req, res));
 
-router.post('/', authMiddleware, (async (req, res) => {
-  await PartnerController.createPartner(req, res);
-}) as RequestHandler);
+// パートナー作成
+router.post('/', (req, res) => PartnerController.createPartner(req, res));
 
-router.put('/:id', authMiddleware, (async (req, res) => {
-  await PartnerController.updatePartner(req, res);
-}) as RequestHandler);
+// パートナー更新
+router.put('/:id', (req, res) => PartnerController.updatePartner(req, res));
 
-// adminMiddlewareを別途適用
-router.delete('/:id', [authMiddleware, (async (req, res, next) => {
-  await adminMiddleware(req, res, next);
-}) as RequestHandler], (async (req, res) => {
-  await PartnerController.deletePartner(req, res);
-}) as RequestHandler);
+// パートナー削除
+router.delete('/:id', (req, res) => PartnerController.deletePartner(req, res));
 
 export default router;

@@ -9,8 +9,8 @@ import {
   Alert,
   CircularProgress
 } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { loginStart, loginSuccess, loginFailure } from '../../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../store';
+import { loginStart, loginSuccess, loginFailure } from '../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {

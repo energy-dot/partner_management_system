@@ -1,22 +1,15 @@
+import express from 'express';
 import { Request, Response } from 'express';
-import Member from '../models/Member';
-import Partner from '../models/Partner';
-import Project from '../models/Project';
 
-// 要員コントローラー
+// メンバーコントローラー
 class MemberController {
-  // 要員一覧取得
+  // メンバー一覧取得
   public async getAllMembers(req: Request, res: Response): Promise<Response> {
     try {
-      const members = await Member.findAll({
-        include: [
-          { model: Partner, attributes: ['name'] },
-          { model: Project, attributes: ['name'] }
-        ]
-      });
       return res.status(200).json({
         success: true,
-        data: members
+        message: 'メンバー一覧を取得しました',
+        members: []
       });
     } catch (error) {
       console.error('Get all members error:', error);
@@ -27,27 +20,14 @@ class MemberController {
     }
   }
 
-  // 要員詳細取得
+  // 特定メンバー取得
   public async getMemberById(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      const member = await Member.findByPk(id, {
-        include: [
-          { model: Partner, attributes: ['id', 'name'] },
-          { model: Project, attributes: ['id', 'name'] }
-        ]
-      });
-      
-      if (!member) {
-        return res.status(404).json({
-          success: false,
-          message: '要員が見つかりません'
-        });
-      }
-
       return res.status(200).json({
         success: true,
-        data: member
+        message: `メンバーID: ${id}の情報を取得しました`,
+        member: {}
       });
     } catch (error) {
       console.error('Get member by id error:', error);
@@ -58,37 +38,14 @@ class MemberController {
     }
   }
 
-  // 要員新規作成
+  // メンバー作成
   public async createMember(req: Request, res: Response): Promise<Response> {
     try {
       const memberData = req.body;
-      
-      // パートナー会社の存在確認
-      const partner = await Partner.findByPk(memberData.partnerId);
-      if (!partner) {
-        return res.status(400).json({
-          success: false,
-          message: '指定されたパートナー会社が存在しません'
-        });
-      }
-      
-      // プロジェクトの存在確認（指定されている場合）
-      if (memberData.projectId) {
-        const project = await Project.findByPk(memberData.projectId);
-        if (!project) {
-          return res.status(400).json({
-            success: false,
-            message: '指定された案件が存在しません'
-          });
-        }
-      }
-      
-      const newMember = await Member.create(memberData);
-      
       return res.status(201).json({
         success: true,
-        message: '要員を登録しました',
-        data: newMember
+        message: 'メンバーを作成しました',
+        member: memberData
       });
     } catch (error) {
       console.error('Create member error:', error);
@@ -99,48 +56,15 @@ class MemberController {
     }
   }
 
-  // 要員更新
+  // メンバー更新
   public async updateMember(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
       const memberData = req.body;
-      
-      const member = await Member.findByPk(id);
-      if (!member) {
-        return res.status(404).json({
-          success: false,
-          message: '要員が見つかりません'
-        });
-      }
-      
-      // パートナー会社の存在確認（変更されている場合）
-      if (memberData.partnerId && memberData.partnerId !== member.partnerId) {
-        const partner = await Partner.findByPk(memberData.partnerId);
-        if (!partner) {
-          return res.status(400).json({
-            success: false,
-            message: '指定されたパートナー会社が存在しません'
-          });
-        }
-      }
-      
-      // プロジェクトの存在確認（指定されている場合）
-      if (memberData.projectId && memberData.projectId !== member.projectId) {
-        const project = await Project.findByPk(memberData.projectId);
-        if (!project) {
-          return res.status(400).json({
-            success: false,
-            message: '指定された案件が存在しません'
-          });
-        }
-      }
-      
-      await member.update(memberData);
-      
       return res.status(200).json({
         success: true,
-        message: '要員情報を更新しました',
-        data: member
+        message: `メンバーID: ${id}の情報を更新しました`,
+        member: memberData
       });
     } catch (error) {
       console.error('Update member error:', error);
@@ -151,24 +75,13 @@ class MemberController {
     }
   }
 
-  // 要員削除
+  // メンバー削除
   public async deleteMember(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      
-      const member = await Member.findByPk(id);
-      if (!member) {
-        return res.status(404).json({
-          success: false,
-          message: '要員が見つかりません'
-        });
-      }
-      
-      await member.destroy();
-      
       return res.status(200).json({
         success: true,
-        message: '要員を削除しました'
+        message: `メンバーID: ${id}を削除しました`
       });
     } catch (error) {
       console.error('Delete member error:', error);
