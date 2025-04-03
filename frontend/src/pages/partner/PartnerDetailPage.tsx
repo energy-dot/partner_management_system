@@ -13,6 +13,26 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+// パートナー会社の型定義
+interface Partner {
+  id: string | undefined;
+  name: string;
+  legalNumber: string;
+  address: string;
+  phone: string;
+  fax: string;
+  website: string;
+  foundedDate: string;
+  capital: string;
+  employees: string;
+  business: string;
+  bank: string;
+  representative: string;
+  status: string;
+  registeredDate: string;
+  updatedDate: string;
+}
+
 // タブパネルのインターフェース
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -21,7 +41,7 @@ interface TabPanelProps {
 }
 
 // タブパネルコンポーネント
-function TabPanel(props: TabPanelProps) {
+function TabPanel(props: TabPanelProps): React.ReactElement {
   const { children, value, index, ...other } = props;
 
   return (
@@ -42,14 +62,14 @@ function TabPanel(props: TabPanelProps) {
 }
 
 // パートナー会社詳細ページコンポーネント
-const PartnerDetailPage: React.FC = () => {
+const PartnerDetailPage: React.FC = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [tabValue, setTabValue] = useState(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [tabValue, setTabValue] = useState<number>(0);
   
   // パートナー会社の仮データ
-  const [partner, setPartner] = useState({
+  const [partner] = useState<Partner>({
     id: id,
     name: 'サンプルパートナー株式会社',
     legalNumber: '1234567890123',
@@ -69,12 +89,12 @@ const PartnerDetailPage: React.FC = () => {
   });
 
   // タブの切り替え処理
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number): void => {
     setTabValue(newValue);
   };
 
   // 戻るボタンの処理
-  const handleBack = () => {
+  const handleBack = (): void => {
     navigate('/partners');
   };
 
@@ -86,7 +106,7 @@ const PartnerDetailPage: React.FC = () => {
       setLoading(false);
     }, 500);
     
-    return () => clearTimeout(timer);
+    return (): void => clearTimeout(timer);
   }, [id]);
 
   if (loading) {
