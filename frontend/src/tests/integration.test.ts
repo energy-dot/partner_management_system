@@ -1,5 +1,11 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import { setupApiMocks } from './test-utils';
+
+// APIモックのセットアップ関数を追加
+export const setupApiMocks = () => {
+  return new MockAdapter(axios);
+};
 
 // フロントエンドとバックエンドの連携テスト
 describe('Frontend-Backend Integration Tests', () => {
@@ -7,7 +13,7 @@ describe('Frontend-Backend Integration Tests', () => {
   
   beforeEach(() => {
     // Axiosのモックを設定
-    mock = new MockAdapter(axios);
+    mock = setupApiMocks();
   });
   
   afterEach(() => {
