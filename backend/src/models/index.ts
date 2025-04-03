@@ -4,41 +4,35 @@ import User from './User';
 import Partner from './Partner';
 import Project from './Project';
 import Member from './Member';
-import Application from './Application';
-import CreditCheck from './CreditCheck';
 import Contract from './Contract';
-import ProjectInvitation from './ProjectInvitation';
 import IndividualContract from './IndividualContract';
+import CreditCheck from './CreditCheck';
 import MemberCommunication from './MemberCommunication';
 import MemberEvaluation from './MemberEvaluation';
+import ProjectInvitation from './ProjectInvitation';
+import Application from './Application';
 
-// Sequelizeインスタンスの作成
-const sequelize = new Sequelize({
-  database: dbConfig.database,
-  username: dbConfig.username,
-  password: dbConfig.password,
+// データベース接続の設定
+export const sequelize = new Sequelize({
+  dialect: dbConfig.dialect as any,
   host: dbConfig.host,
   port: dbConfig.port,
-  dialect: 'postgres',
-  pool: {
-    max: dbConfig.pool.max,
-    min: dbConfig.pool.min,
-    acquire: dbConfig.pool.acquire,
-    idle: dbConfig.pool.idle
-  },
-  logging: process.env.NODE_ENV === 'development' ? console.log : false,
+  username: dbConfig.username,
+  password: dbConfig.password,
+  database: dbConfig.database,
+  logging: false,
   models: [
     User,
     Partner,
     Project,
     Member,
-    Application,
-    CreditCheck,
     Contract,
-    ProjectInvitation,
     IndividualContract,
+    CreditCheck,
     MemberCommunication,
-    MemberEvaluation
+    MemberEvaluation,
+    ProjectInvitation,
+    Application
   ]
 });
 

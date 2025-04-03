@@ -1,18 +1,16 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
-import sequelize from './index';
 import Member from './Member';
 import Project from './Project';
-import Partner from './Partner';
 
-// 応募モデルクラス
 @Table({
-  tableName: 'applications'
+  tableName: 'applications',
+  timestamps: true
 })
 class Application extends Model {
   @Column({
     type: DataType.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
+    autoIncrement: true
   })
   id!: number;
 
@@ -31,53 +29,14 @@ class Application extends Model {
   projectId!: number;
 
   @Column({
-    type: DataType.STRING(100),
-    allowNull: false
-  })
-  applicantName!: string;
-
-  @ForeignKey(() => Partner)
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false
-  })
-  partnerId!: number;
-
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true
-  })
-  skills!: string;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true
-  })
-  rate!: number;
-
-  @Column({
     type: DataType.DATE,
-    allowNull: false,
-    defaultValue: DataType.NOW
+    allowNull: false
   })
   applicationDate!: Date;
 
   @Column({
-    type: DataType.TEXT,
-    allowNull: true
-  })
-  coverLetter!: string;
-
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true
-  })
-  resumeUrl!: string;
-
-  @Column({
-    type: DataType.STRING(20),
-    allowNull: false,
-    defaultValue: '審査中'
+    type: DataType.STRING,
+    allowNull: false
   })
   status!: string;
 
@@ -85,27 +44,25 @@ class Application extends Model {
     type: DataType.TEXT,
     allowNull: true
   })
-  notes!: string;
+  notes?: string;
 
   @Column({
-    type: DataType.DATE,
+    type: DataType.STRING,
     allowNull: true
   })
-  interviewDate!: Date | null;
+  resumeUrl?: string;
 
   @Column({
-    type: DataType.DATE,
-    allowNull: false,
-    defaultValue: DataType.NOW
+    type: DataType.STRING,
+    allowNull: true
   })
-  createdAt!: Date;
+  interviewDate?: string;
 
   @Column({
-    type: DataType.DATE,
-    allowNull: false,
-    defaultValue: DataType.NOW
+    type: DataType.STRING,
+    allowNull: true
   })
-  updatedAt!: Date;
+  interviewResult?: string;
 
   // リレーションシップ
   @BelongsTo(() => Member)
@@ -113,9 +70,6 @@ class Application extends Model {
 
   @BelongsTo(() => Project)
   project!: Project;
-
-  @BelongsTo(() => Partner)
-  partner!: Partner;
 }
 
 export default Application;

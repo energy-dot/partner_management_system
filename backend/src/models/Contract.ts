@@ -1,4 +1,8 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
+
+// DataTypesをインポートして値として使用できるようにする
+
+
 import sequelize from './index';
 import Partner from './Partner';
 import IndividualContract from './IndividualContract';

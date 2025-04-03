@@ -1,14 +1,11 @@
-import sequelize from '../src/models/index';
+import { sequelize } from '../src/config/database';
 import User from '../src/models/User';
 import Partner from '../src/models/Partner';
 import Project from '../src/models/Project';
 import Member from '../src/models/Member';
-import Application from '../src/models/Application';
 
-// データベースモデルのテスト
-describe('Database Models Tests', () => {
-  
-  // テスト前にデータベース接続を確認
+describe('Model Tests', () => {
+  // テスト前にデータベースに接続
   beforeAll(async () => {
     try {
       await sequelize.authenticate();
@@ -21,12 +18,10 @@ describe('Database Models Tests', () => {
       console.error('データベース接続エラー:', error);
     }
   });
-
   // テスト後にデータベース接続を閉じる
   afterAll(async () => {
     await sequelize.close();
   });
-
   // ユーザーモデルのテスト
   describe('User Model Tests', () => {
     test('ユーザーの作成', async () => {
@@ -58,7 +53,6 @@ describe('Database Models Tests', () => {
       expect(isInvalid).toBe(false);
     });
   });
-
   // パートナー会社モデルのテスト
   describe('Partner Model Tests', () => {
     test('パートナー会社の作成', async () => {
@@ -84,7 +78,6 @@ describe('Database Models Tests', () => {
       expect(partner.status).toBe(partnerData.status);
     });
   });
-
   // 案件モデルのテスト
   describe('Project Model Tests', () => {
     test('案件の作成', async () => {
@@ -106,6 +99,7 @@ describe('Database Models Tests', () => {
       expect(project.code).toBe(projectData.code);
       expect(project.name).toBe(projectData.name);
       expect(project.department).toBe(projectData.department);
+      // Projectモデルのプロパティ名を修正
       expect(project.manager).toBe(projectData.manager);
       expect(project.description).toBe(projectData.description);
       expect(project.requiredSkills).toBe(projectData.requiredSkills);
@@ -113,7 +107,6 @@ describe('Database Models Tests', () => {
       expect(project.status).toBe(projectData.status);
     });
   });
-
   // リレーションシップのテスト
   describe('Relationship Tests', () => {
     test('パートナー会社と要員のリレーションシップ', async () => {
@@ -162,10 +155,14 @@ describe('Database Models Tests', () => {
         ]
       });
       
-      expect(foundMember).toHaveProperty('Partner');
-      expect(foundMember).toHaveProperty('Project');
-      expect(foundMember.Partner.name).toBe('リレーションテスト株式会社');
-      expect(foundMember.Project.name).toBe('リレーションテストプロジェクト');
+      // nullチェックを追加
+      expect(foundMember).not.toBeNull();
+      if (foundMember) {
+        expect(foundMember).toHaveProperty('partner');
+        expect(foundMember).toHaveProperty('project');
+        expect(foundMember.partner.name).toBe('リレーションテスト株式会社');
+        expect(foundMember.project.name).toBe('リレーションテストプロジェクト');
+      }
     });
   });
 });

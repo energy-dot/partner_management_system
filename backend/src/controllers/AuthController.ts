@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { serverConfig } from '../config/config';
-import { AuthRequest } from '../middleware/authMiddleware';
 
 // ユーザー認証コントローラー
 class AuthController {
@@ -10,7 +9,6 @@ class AuthController {
   public async login(req: Request, res: Response): Promise<Response> {
     try {
       const { username, password } = req.body;
-
       // 入力チェック
       if (!username || !password) {
         return res.status(400).json({
@@ -18,7 +16,6 @@ class AuthController {
           message: 'ユーザー名とパスワードを入力してください'
         });
       }
-
       // ユーザーの検索
       const user = await User.findOne({ where: { username } });
       if (!user) {
@@ -27,7 +24,6 @@ class AuthController {
           message: 'ユーザー名またはパスワードが正しくありません'
         });
       }
-
       // パスワードの検証
       const isPasswordValid = await user.validatePassword(password);
       if (!isPasswordValid) {
@@ -36,7 +32,6 @@ class AuthController {
           message: 'ユーザー名またはパスワードが正しくありません'
         });
       }
-
       // アクティブ状態の確認
       if (!user.isActive) {
         return res.status(401).json({
@@ -44,11 +39,9 @@ class AuthController {
           message: 'このアカウントは無効化されています'
         });
       }
-
       // 最終ログイン日時の更新
       user.lastLogin = new Date();
       await user.save();
-
       // JWTトークンの生成
       const payload = { 
         id: user.id, 
@@ -62,7 +55,6 @@ class AuthController {
         serverConfig.jwtSecret,
         { expiresIn: serverConfig.jwtExpiresIn }
       );
-
       // ユーザー情報からパスワードを除外
       const userWithoutPassword = {
         id: user.id,
@@ -72,7 +64,6 @@ class AuthController {
         role: user.role,
         department: user.department
       };
-
       return res.status(200).json({
         success: true,
         message: 'ログインに成功しました',
@@ -87,7 +78,6 @@ class AuthController {
       });
     }
   }
-
   // ログアウト処理
   public async logout(req: Request, res: Response): Promise<Response> {
     try {
@@ -104,14 +94,11 @@ class AuthController {
       });
     }
   }
-
   // パスワード変更処理
   public async changePassword(req: Request, res: Response): Promise<Response> {
     try {
-      const authReq = req as AuthRequest;
-      const userId = authReq.userId;
+      const userId = req.user?.id;
       const { currentPassword, newPassword } = req.body;
-
       // 入力チェック
       if (!currentPassword || !newPassword) {
         return res.status(400).json({
@@ -119,7 +106,6 @@ class AuthController {
           message: '現在のパスワードと新しいパスワードを入力してください'
         });
       }
-
       // ユーザーの検索
       const user = await User.findByPk(userId);
       if (!user) {
@@ -128,7 +114,6 @@ class AuthController {
           message: 'ユーザーが見つかりません'
         });
       }
-
       // 現在のパスワードの検証
       const isPasswordValid = await user.validatePassword(currentPassword);
       if (!isPasswordValid) {
@@ -137,11 +122,9 @@ class AuthController {
           message: '現在のパスワードが正しくありません'
         });
       }
-
       // パスワードの更新
       user.password = newPassword;
       await user.save();
-
       return res.status(200).json({
         success: true,
         message: 'パスワードの変更に成功しました'
@@ -154,14 +137,11 @@ class AuthController {
       });
     }
   }
-
   // ユーザー情報取得
   public async getProfile(req: Request, res: Response): Promise<Response> {
     try {
       // リクエストからユーザーIDを取得（認証ミドルウェアで設定）
-      const authReq = req as AuthRequest;
-      const userId = authReq.userId;
-
+      const userId = req.user?.id;
       // ユーザーの検索
       const user = await User.findByPk(userId);
       if (!user) {
@@ -170,7 +150,6 @@ class AuthController {
           message: 'ユーザーが見つかりません'
         });
       }
-
       // ユーザー情報からパスワードを除外
       const userWithoutPassword = {
         id: user.id,
@@ -180,7 +159,6 @@ class AuthController {
         role: user.role,
         department: user.department
       };
-
       return res.status(200).json({
         success: true,
         user: userWithoutPassword
@@ -194,5 +172,4 @@ class AuthController {
     }
   }
 }
-
 export default new AuthController();
